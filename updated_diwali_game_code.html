@@ -1,0 +1,2578 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Happy Diwali 2026 - Game Design by Rishi Sir</title>
+<style>
+  * {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #04010a;
+    font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+    touch-action: none;
+  }
+  #gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Top Header & Personalized Greeting */
+  #topHeader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(180deg, rgba(6,2,15,0.96) 0%, rgba(6,2,15,0.8) 80%, rgba(6,2,15,0) 100%);
+    padding: 6px 8px 10px 8px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .brand-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2px;
+  }
+  .rishi-badge {
+    background: linear-gradient(45deg, #ff512f, #dd2476);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 11.5px;
+    border: 1.5px solid #ffd700;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+  .greeting-pill {
+    background: rgba(255, 215, 0, 0.15);
+    border: 1px solid #ffd700;
+    color: #ffd700;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 0 0 6px #ff6600;
+  }
+
+  /* 4 Level Tabs */
+  .tabs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    width: 100%;
+  }
+  .tab-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ddd;
+    border: 1.5px solid rgba(255, 215, 0, 0.35);
+    padding: 7px 2px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: linear-gradient(45deg, #ff8008, #ffc837);
+    color: #260000;
+    border-color: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 200, 55, 0.85);
+    transform: scale(1.03);
+  }
+
+  /* Voice & Instruction Banner */
+  #voiceBanner {
+    position: absolute;
+    top: 86px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20, 4, 30, 0.92);
+    border: 1.5px solid #ff9900;
+    color: #fff;
+    padding: 7px 14px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    z-index: 18;
+    pointer-events: none;
+    width: 94%;
+    max-width: 480px;
+    transition: opacity 0.3s;
+  }
+
+  /* Floating Refill Button */
+  #refillBtn {
+    position: absolute;
+    top: 132px;
+    right: 12px;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: #fff;
+    border: 1.5px solid #ffd700;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 19;
+    box-shadow: 0 3px 12px rgba(255, 65, 108, 0.6);
+    display: none;
+  }
+  #refillBtn:active {
+    transform: scale(0.95);
+  }
+
+  /* Bottom Mobile Dock */
+  #bottomDock {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 96%;
+    max-width: 500px;
+    background: rgba(14, 3, 26, 0.94);
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    border-radius: 18px;
+    padding: 7px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 5px;
+    z-index: 20;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.9);
+  }
+  .tool-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    padding: 7px 3px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .tool-btn span.icon {
+    font-size: 19px;
+  }
+  .tool-btn.selected {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+    color: #001a00;
+    border-color: #fff;
+    box-shadow: 0 0 12px rgba(150, 201, 61, 0.8);
+    transform: translateY(-2px);
+  }
+
+  /* Footer Branding */
+  #footerBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 22px;
+    background: #090114;
+    color: #ffd700;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    border-top: 1px solid rgba(255, 215, 0, 0.3);
+  }
+
+  /* Welcome Overlay with Name Input */
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(35,8,30,0.98) 0%, rgba(5,1,12,0.99) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    color: #fff;
+    text-align: center;
+    padding: 18px;
+  }
+  .overlay h1 {
+    font-size: clamp(24px, 6.5vw, 38px);
+    color: #ffd700;
+    text-shadow: 0 0 15px #ff6600;
+    margin-bottom: 4px;
+  }
+  .overlay h2 {
+    font-size: clamp(14px, 3.8vw, 19px);
+    color: #ff9933;
+    margin-bottom: 12px;
+  }
+  .credit-box {
+    background: rgba(255, 215, 0, 0.15);
+    border: 2px dashed #ffd700;
+    padding: 6px 18px;
+    border-radius: 12px;
+    font-size: 15px;
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 14px;
+  }
+  .name-input-box {
+    width: 90%;
+    max-width: 320px;
+    margin-bottom: 14px;
+  }
+  .name-input-box input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 30px;
+    border: 2px solid #ffd700;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  }
+  .name-input-box input::placeholder {
+    color: #ccc;
+  }
+  .steps-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 14px;
+    padding: 12px;
+    max-width: 400px;
+    text-align: left;
+    font-size: 12.5px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #eee;
+  }
+  .start-btn {
+    background: linear-gradient(45deg, #ff8008, #ffc837);
+    color: #2b0900;
+    border: none;
+    padding: 13px 34px;
+    font-size: 18px;
+    font-weight: 900;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 25px rgba(255, 128, 8, 0.7);
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Mobile Header -->
+<div id="topHeader">
+  <div class="brand-row">
+    <div class="rishi-badge">✨ Game Design by Rishi Sir ✨</div>
+    <div class="greeting-pill" id="greetingPill">🪔 Happy Diwali 2026!</div>
+  </div>
+  <div class="tabs-grid">
+    <button class="tab-btn active" id="tab1" onclick="switchTab(1)">🏠 1. घर सजाओ</button>
+    <button class="tab-btn" id="tab2" onclick="switchTab(2)">🎇 2. नन्हे पटाखे</button>
+    <button class="tab-btn" id="tab3" onclick="switchTab(3)">💣 3. धमाका</button>
+    <button class="tab-btn" id="tab4" onclick="switchTab(4)">🎆 4. ग्रैंड शो</button>
+  </div>
+</div>
+
+<!-- Voice & Step Instruction Banner -->
+<div id="voiceBanner">नीचे से '1. बाती' चुनें और मिट्टी के दीयों को छुएं!</div>
+
+<!-- Floating Refill Button -->
+<button id="refillBtn" onclick="refillCurrentCrackers()">🔄 फिर से रखें</button>
+
+<!-- Bottom Interactive Tool Dock -->
+<div id="bottomDock"></div>
+
+<!-- Footer Branding -->
+<div id="footerBar">🪔 Happy Diwali 2026 • Game Design by Rishi Sir 🪔</div>
+
+<!-- Start Screen Overlay with Name Input -->
+<div class="overlay" id="startOverlay">
+  <h1>🪔 दिवाली महा-उत्सव 2026 🎆</h1>
+  <h2>घर सजाओ और फुलझड़ी से पटाखे फोड़ो!</h2>
+  <div class="credit-box">🌟 Game Design by Rishi Sir 🌟</div>
+  
+  <div class="name-input-box">
+    <input type="text" id="kidNameInput" placeholder="यहाँ अपना नाम लिखें (Enter Name)" maxlength="18" autocomplete="off">
+  </div>
+
+  <div class="steps-card">
+    🏠 <strong>Tab 1 (घर सजाओ):</strong> दीयों में पहले <b>1. बाती</b> ➔ <b>2. तेल</b> ➔ <b>3. माचिस</b> लगाएं, फिर रंगोली सजाएं!<br>
+    🕯️ <strong>पटाखे कैसे जलाएं (Tab 2, 3, 4):</strong><br>
+    1️⃣ बाईं तरफ रखे <b>फुलझड़ी स्टैंड</b> से फुलझड़ी उठाएं।<br>
+    2️⃣ पास रखी <b>जलती मोमबत्ती (Candle)</b> से फुलझड़ी जलाएं।<br>
+    3️⃣ अब 3 साइज़ के अनार, चकरी, सुतली बम, लक्ष्मी बम या रॉकेट जलाएं!
+  </div>
+  <button class="start-btn" id="startBtn">▶ खेल शुरू करें</button>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+// ================= AUDIO SYNTHESIZER & HINDI VOICE =================
+let audioCtx = null;
+let playerName = 'दोस्त';
+
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContext();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function vibratePhone(ms) {
+  if (navigator.vibrate) {
+    try { navigator.vibrate(ms); } catch (e) {}
+  }
+}
+
+let bannerTimer = null;
+function showBanner(msg, dur = 4500) {
+  const el = document.getElementById('voiceBanner');
+  el.innerText = msg;
+  el.style.opacity = '1';
+  if (bannerTimer) clearTimeout(bannerTimer);
+  bannerTimer = setTimeout(() => { el.style.opacity = '0.88'; }, dur);
+}
+
+function speakHindi(text, pitch = 1.05, rate = 1) {
+  showBanner(text);
+  if ('speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'hi-IN';
+      u.pitch = pitch;
+      u.rate = rate;
+      const voices = window.speechSynthesis.getVoices();
+      const hi = voices.find(v => v.lang.includes('hi') || v.name.includes('Hindi'));
+      if (hi) u.voice = hi;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+}
+
+function playSFX(type, variant = 1) {
+  if (!audioCtx) return;
+  const now = audioCtx.currentTime;
+
+  if (type === 'pop') {
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(450, now);
+    osc.frequency.exponentialRampToValueAtTime(900, now + 0.09);
+    g.gain.setValueAtTime(0.3, now);
+    g.gain.linearRampToValueAtTime(0.01, now + 0.09);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 0.09);
+  }
+  else if (type === 'pour') {
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.setValueAtTime(420, now + 0.1);
+    g.gain.setValueAtTime(0.35, now);
+    g.gain.linearRampToValueAtTime(0.01, now + 0.2);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 0.2);
+  }
+  else if (type === 'chime') {
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1046, now);
+    osc.frequency.exponentialRampToValueAtTime(1318, now + 0.4);
+    g.gain.setValueAtTime(0.35, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 0.45);
+  }
+  else if (type === 'sizzle') {
+    const bufSize = audioCtx.sampleRate * 0.22;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.55;
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buf;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 3200 + Math.random() * 1000;
+
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.26, now);
+    g.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+    noise.connect(filter); filter.connect(g); g.connect(audioCtx.destination);
+    noise.start(now);
+  }
+  else if (type === 'whistle') {
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = variant === 2 ? 'triangle' : 'sine';
+    const startFreq = variant === 1 ? 650 : (variant === 2 ? 480 : 800);
+    const endFreq = variant === 1 ? 2600 : (variant === 2 ? 1900 : 3200);
+    osc.frequency.setValueAtTime(startFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.75);
+    g.gain.setValueAtTime(0.28, now);
+    g.gain.linearRampToValueAtTime(0.01, now + 0.75);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 0.75);
+  }
+  else if (type === 'ladi_pop') {
+    vibratePhone(35);
+    const osc = audioCtx.createOscillator();
+    const subGain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.exponentialRampToValueAtTime(45, now + 0.14);
+    subGain.gain.setValueAtTime(0.85, now);
+    subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+    osc.connect(subGain); subGain.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 0.14);
+
+    const bufSize = audioCtx.sampleRate * 0.14;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buf;
+
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.9, now);
+    g.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+    noise.connect(g); g.connect(audioCtx.destination);
+    noise.start(now);
+  }
+  else if (type === 'sutli_boom') {
+    // Ultra heavy bass blast for Sutli Bomb
+    vibratePhone([250, 50, 200, 40, 150]);
+    const osc = audioCtx.createOscillator();
+    const subGain = audioCtx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(110, now);
+    osc.frequency.exponentialRampToValueAtTime(16, now + 0.95);
+    subGain.gain.setValueAtTime(1.0, now);
+    subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.95);
+    osc.connect(subGain); subGain.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 0.95);
+
+    const bufSize = audioCtx.sampleRate * 0.95;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1);
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buf;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(950, now);
+    filter.frequency.exponentialRampToValueAtTime(110, now + 0.95);
+
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(1.0, now);
+    g.gain.exponentialRampToValueAtTime(0.01, now + 0.95);
+    noise.connect(filter); filter.connect(g); g.connect(audioCtx.destination);
+    noise.start(now);
+  }
+  else if (type === 'flower_burst') {
+    // Distinct acoustic burst for each Rocket type (variant 1, 2, 3)
+    vibratePhone([140, 30, 100]);
+    const osc = audioCtx.createOscillator();
+    const subGain = audioCtx.createGain();
+    osc.type = variant === 1 ? 'sine' : (variant === 2 ? 'triangle' : 'square');
+    const baseF = variant === 1 ? 180 : (variant === 2 ? 130 : 240);
+    osc.frequency.setValueAtTime(baseF, now);
+    osc.frequency.exponentialRampToValueAtTime(28, now + 0.7);
+    subGain.gain.setValueAtTime(0.9, now);
+    subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+    osc.connect(subGain); subGain.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 0.7);
+
+    // Crackle overlay for variant 3
+    const bufSize = audioCtx.sampleRate * 0.65;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buf;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(variant === 3 ? 1800 : 900, now);
+
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.85, now);
+    g.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+    noise.connect(filter); filter.connect(g); g.connect(audioCtx.destination);
+    noise.start(now);
+  }
+  else if (type === 'boom') {
+    vibratePhone([180, 40, 120]);
+    const osc = audioCtx.createOscillator();
+    const subGain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.exponentialRampToValueAtTime(22, now + 0.65);
+    subGain.gain.setValueAtTime(0.95, now);
+    subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+    osc.connect(subGain); subGain.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 0.65);
+
+    const bufSize = audioCtx.sampleRate * 0.65;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buf;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1200, now);
+    filter.frequency.exponentialRampToValueAtTime(160, now + 0.65);
+
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.85, now);
+    g.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+    noise.connect(filter); filter.connect(g); g.connect(audioCtx.destination);
+    noise.start(now);
+  }
+}
+
+// ================= CANVAS & STATE =================
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let W = window.innerWidth;
+let H = window.innerHeight;
+canvas.width = W;
+canvas.height = H;
+
+let currentTab = 1;
+let currentTool = 'BATI';
+let screenShake = 0;
+let whiteFlash = 0;
+let skyBannerText = '';
+let skyBannerSubText = '';
+let skyBannerTimer = 0;
+
+// Fuljhadi & Candle System for Tabs 2, 3, 4
+let fuljhadi = {
+  state: 'NONE', // 'NONE' (not picked), 'UNLIT' (picked from stand), 'LIT' (lit from candle)
+  x: W / 2,
+  y: H / 2
+};
+
+let candleStation = {
+  standX: 38,
+  standY: H * 0.75,
+  candleX: 92,
+  candleY: H * 0.75
+};
+
+// House State (Only drawn in Tab 1)
+let house = {
+  x: W / 2,
+  y: H * 0.52,
+  w: 300,
+  h: 180,
+  lightsOn: false,
+  toranOn: false,
+  diyas: [],
+  rangoliDots: []
+};
+
+function updateLayout() {
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W;
+  canvas.height = H;
+
+  house.w = Math.min(320, W * 0.88);
+  house.h = Math.min(180, H * 0.25);
+  house.x = W / 2;
+  house.y = H * 0.52;
+
+  candleStation.standX = 36;
+  candleStation.standY = H * 0.75;
+  candleStation.candleX = 88;
+  candleStation.candleY = H * 0.75;
+
+  const left = house.x - house.w / 2;
+  const right = house.x + house.w / 2;
+  const roofY = house.y - house.h;
+  const ledgeY = house.y - house.h * 0.45;
+  const groundY = house.y + 8;
+
+  const old = house.diyas.map(d => ({ hasBati: d.hasBati, hasOil: d.hasOil, isLit: d.isLit }));
+  const pts = [
+    { x: left + 25, y: roofY },
+    { x: house.x, y: roofY - 22 },
+    { x: right - 25, y: roofY },
+    { x: left + 35, y: ledgeY },
+    { x: right - 35, y: ledgeY },
+    { x: left + 20, y: groundY },
+    { x: right - 20, y: groundY }
+  ];
+
+  house.diyas = pts.map((p, i) => ({
+    x: p.x, y: p.y,
+    hasBati: old[i] ? old[i].hasBati : false,
+    hasOil: old[i] ? old[i].hasOil : false,
+    isLit: old[i] ? old[i].isLit : false
+  }));
+}
+updateLayout();
+window.addEventListener('resize', updateLayout);
+
+let groundCrackers = [];
+let skyRockets = [];
+let particles = [];
+let smokeClouds = [];
+let shockwaves = [];
+let paperDebris = [];
+let burntMarks = [];
+let stars = [];
+for (let i = 0; i < 65; i++) {
+  stars.push({ x: Math.random() * 1600, y: Math.random() * 900, r: Math.random() * 1.8 + 0.4 });
+}
+
+let pointer = { x: W / 2, y: H / 2, active: false };
+
+// ================= TOOLS PER TAB =================
+const tabTools = {
+  1: [
+    { id: 'BATI', icon: '☁️', label: '1. बाती' },
+    { id: 'OIL', icon: '🏺', label: '2. तेल' },
+    { id: 'MATCH', icon: '🔥', label: '3. माचिस' },
+    { id: 'RANGOLI', icon: '🎨', label: '4. रंगोली' },
+    { id: 'LIGHTS', icon: '✨', label: '5. झालर' }
+  ],
+  2: [
+    { id: 'ANAR', icon: '⛲', label: '3 बड़े अनार' },
+    { id: 'CHAKRI', icon: '🌀', label: '3 ज़मीन चकरी' },
+    { id: 'SNAKE', icon: '🐍', label: 'सांप की गोली' }
+  ],
+  3: [
+    { id: 'SUTLI', icon: '💣', label: 'सुतली बम' },
+    { id: 'LAXMI', icon: '🧨', label: 'लक्ष्मी बम' },
+    { id: 'ROCKET', icon: '🚀', label: '3 रॉकेट' }
+  ],
+  4: [
+    { id: 'LADI_20', icon: '🧨', label: '20-बम लड़ी' },
+    { id: 'LADI_50', icon: '🔥', label: '50-बम लड़ी' },
+    { id: 'SKYSHOT', icon: '🎆', label: '3 स्काई शॉट' },
+    { id: 'RISHI_FINALE', icon: '👑', label: 'स्पेशल शो' }
+  ]
+};
+
+window.refillCurrentCrackers = function() {
+  initAudio();
+  playSFX('pop');
+  spawnSelectedCracker(currentTool);
+};
+
+window.switchTab = function(tabNum) {
+  initAudio();
+  currentTab = tabNum;
+  [1, 2, 3, 4].forEach(n => {
+    document.getElementById('tab' + n).classList.toggle('active', n === tabNum);
+  });
+
+  groundCrackers = [];
+  particles = [];
+  smokeClouds = [];
+  shockwaves = [];
+  paperDebris = [];
+  burntMarks = [];
+
+  const refillBtn = document.getElementById('refillBtn');
+  if (tabNum === 1) {
+    refillBtn.style.display = 'none';
+    fuljhadi.state = 'NONE';
+    selectTool('BATI');
+    speakHindi(`हैप्पी दिवाली 2026 ${playerName}! चलो पहले दीयों में बाती और तेल डालकर घर सजाएं!`);
+  } else {
+    refillBtn.style.display = 'block';
+    fuljhadi.state = 'NONE';
+    if (tabNum === 2) selectTool('ANAR');
+    else if (tabNum === 3) selectTool('SUTLI');
+    else if (tabNum === 4) selectTool('LADI_20');
+
+    speakHindi(`${playerName}, पहले बाईं तरफ स्टैंड से फुलझड़ी उठाओ, फिर मोमबत्ती से जलाकर पटाखा फोड़ो!`);
+  }
+};
+
+function renderBottomDock() {
+  const dock = document.getElementById('bottomDock');
+  dock.innerHTML = '';
+  tabTools[currentTab].forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'tool-btn' + (currentTool === item.id ? ' selected' : '');
+    btn.innerHTML = `<span class="icon">${item.icon}</span><span>${item.label}</span>`;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      initAudio();
+      selectTool(item.id);
+    };
+    dock.appendChild(btn);
+  });
+}
+
+function selectTool(toolId) {
+  currentTool = toolId;
+  renderBottomDock();
+
+  if (currentTab === 1) {
+    if (toolId === 'BATI') showBanner('☁️ स्टेप 1: मिट्टी के दीयों पर उंगली फिराकर रुई की बाती लगाएं!');
+    else if (toolId === 'OIL') showBanner('🏺 स्टेप 2: बाती वाले दीयों में तेल भरें!');
+    else if (toolId === 'MATCH') showBanner('🔥 स्टेप 3: तेल भरे दीयों को छूकर शुभ ज्योत जलाएं!');
+    else if (toolId === 'RANGOLI') showBanner('🎨 आंगन में टैप करके रंग-बिरंगी रंगोली बनाएं!');
+    else if (toolId === 'LIGHTS') {
+      house.lightsOn = !house.lightsOn;
+      house.toranOn = true;
+      playSFX('chime');
+      speakHindi('वाह! घर पर तोरण और झिलमिलाती झालर लग गई!');
+    }
+  } else {
+    spawnSelectedCracker(toolId);
+  }
+}
+
+function getThreePositions() {
+  const startX = Math.max(145, W * 0.34);
+  const endX = Math.min(W - 42, W * 0.90);
+  const midX = (startX + endX) / 2;
+  return [startX, midX, endX];
+}
+
+function spawnSelectedCracker(type) {
+  groundCrackers = [];
+  paperDebris = [];
+  shockwaves = [];
+  const cy = H * 0.75;
+  const cx = Math.max(W * 0.62, 185);
+  const xs = getThreePositions();
+
+  if (type === 'ANAR') {
+    // 3 Different Size Anars with unique flame colors & durations
+    const configs = [
+      { size: 1, scale: 0.75, dur: 210, label: 'छोटा अनार', colors: ['#00ffff', '#ffffff', '#38bdf8', '#a5f3fc'], hFactor: 0.48 },
+      { size: 2, scale: 1.0,  dur: 330, label: 'मीडियम अनार', colors: ['#ffd700', '#ff9900', '#ffffff', '#fde047'], hFactor: 0.74 },
+      { size: 3, scale: 1.32, dur: 480, label: 'जम्बो अनार', colors: ['#ff0055', '#00ff88', '#ffd700', '#a855f7', '#ffffff'], hFactor: 0.96 }
+    ];
+    configs.forEach((cfg, idx) => {
+      groundCrackers.push({
+        type: 'ANAR',
+        x: xs[idx],
+        y: cy,
+        baseX: xs[idx],
+        baseY: cy,
+        scale: cfg.scale,
+        size: cfg.size,
+        duration: cfg.dur,
+        flameColors: cfg.colors,
+        heightFactor: cfg.hFactor,
+        label: cfg.label,
+        fuseX: xs[idx],
+        fuseY: cy - 36 * cfg.scale,
+        state: 'READY',
+        timer: 0
+      });
+    });
+  }
+  else if (type === 'CHAKRI') {
+    // 3 Different Size Chakris with unique spin durations & light colors
+    const configs = [
+      { size: 1, scale: 0.75, dur: 190, label: 'छोटी चकरी', colors: ['#ffd700', '#ffffff', '#ff9900', '#fde047', '#fbbf24', '#fff'] },
+      { size: 2, scale: 1.0,  dur: 320, label: 'मीडियम चकरी', colors: ['#ff0055', '#00ffcc', '#22c55e', '#f43f5e', '#06b6d4', '#fff'] },
+      { size: 3, scale: 1.35, dur: 460, label: 'बड़ी चकरी', colors: ['#ff0055', '#ffcc00', '#00ffcc', '#a855f7', '#3b82f6', '#22c55e'] }
+    ];
+    configs.forEach((cfg, idx) => {
+      groundCrackers.push({
+        type: 'CHAKRI',
+        x: xs[idx],
+        y: cy,
+        baseX: xs[idx],
+        baseY: cy,
+        scale: cfg.scale,
+        size: cfg.size,
+        duration: cfg.dur,
+        chakriColors: cfg.colors,
+        label: cfg.label,
+        angle: 0,
+        fuseX: xs[idx] + 22 * cfg.scale,
+        fuseY: cy,
+        state: 'READY',
+        timer: 0
+      });
+    });
+  }
+  else if (type === 'SNAKE') {
+    // Long thick realistic Snake tablet that stays on screen until tab/tool switch
+    groundCrackers.push({
+      type: 'SNAKE',
+      x: cx,
+      y: cy,
+      baseX: cx,
+      baseY: cy,
+      fuseX: cx,
+      fuseY: cy - 16,
+      state: 'READY',
+      timer: 0,
+      snakeNodes: [{ x: 0, y: 0, w: 18 }],
+      growProgress: 0
+    });
+  }
+  else if (type === 'SUTLI') {
+    groundCrackers.push({
+      type: 'SUTLI',
+      x: cx,
+      y: cy,
+      fuseX: cx + 6,
+      fuseY: cy - 38,
+      state: 'READY',
+      timer: 0
+    });
+  }
+  else if (type === 'LAXMI') {
+    groundCrackers.push({
+      type: 'LAXMI',
+      x: cx,
+      y: cy,
+      fuseX: cx,
+      fuseY: cy - 58,
+      state: 'READY',
+      timer: 0
+    });
+  }
+  else if (type === 'ROCKET') {
+    // 3 Different Rockets in Bottles so player can choose which to blow first
+    const rConfigs = [
+      { rType: 1, label: 'सीटी रॉकेट', bodyCol: '#3b82f6', coneCol: '#fde047' },
+      { rType: 2, label: 'सतरंगी रॉकेट', bodyCol: '#ec4899', coneCol: '#00ffcc' },
+      { rType: 3, label: 'फूल रॉकेट', bodyCol: '#10b981', coneCol: '#ff0055' }
+    ];
+    rConfigs.forEach((rc, idx) => {
+      groundCrackers.push({
+        type: 'ROCKET',
+        x: xs[idx],
+        y: cy,
+        rocketType: rc.rType,
+        label: rc.label,
+        bodyCol: rc.bodyCol,
+        coneCol: rc.coneCol,
+        fuseX: xs[idx],
+        fuseY: cy - 18,
+        state: 'READY',
+        timer: 0
+      });
+    });
+  }
+  else if (type === 'LADI_20' || type === 'LADI_50') {
+    const total = type === 'LADI_20' ? 20 : 50;
+    let ladiList = [];
+    if (type === 'LADI_20') {
+      const cols = 2;
+      for (let i = 0; i < total; i++) {
+        const r = Math.floor(i / cols);
+        const c = i % cols;
+        ladiList.push({
+          ox: (c - 0.5) * 20,
+          oy: -r * 14 + 20,
+          isGold: false,
+          exploded: false
+        });
+      }
+    } else {
+      // 50-Bomb Maha-Ladi arranged in a festive S-curve carpet
+      for (let i = 0; i < total; i++) {
+        const row = Math.floor(i / 2);
+        const side = (i % 2 === 0) ? -1 : 1;
+        const curveX = Math.sin(row * 0.35) * 38;
+        ladiList.push({
+          ox: curveX + side * 14,
+          oy: -row * 8.5 + 28,
+          isGold: i >= 46 || (i % 5 === 0),
+          exploded: false
+        });
+      }
+    }
+    groundCrackers.push({
+      type: type,
+      x: cx,
+      y: cy,
+      fuseX: cx,
+      fuseY: cy + 34,
+      state: 'READY',
+      timer: 0,
+      ladiItems: ladiList,
+      ladiIndex: 0
+    });
+  }
+  else if (type === 'SKYSHOT') {
+    // 3 Different Multi-Shot Tubes (7-Shot, 12-Shot, 25-Shot)
+    const sConfigs = [
+      { shots: 7,  interval: 34, col: '#ec4899', label: '7-शॉट (⭐)' },
+      { shots: 12, interval: 26, col: '#8b5cf6', label: '12-शॉट (❤️)' },
+      { shots: 25, interval: 16, col: '#06b6d4', label: '25-शॉट (🌸)' }
+    ];
+    sConfigs.forEach((sc, idx) => {
+      groundCrackers.push({
+        type: 'SKYSHOT',
+        x: xs[idx],
+        y: cy,
+        shotsTotal: sc.shots,
+        shotsLeft: sc.shots,
+        shotInterval: sc.interval,
+        tubeColor: sc.col,
+        tubeIndex: idx + 1,
+        label: sc.label,
+        fuseX: xs[idx],
+        fuseY: cy - 38,
+        state: 'READY',
+        timer: 0
+      });
+    });
+  }
+  else if (type === 'RISHI_FINALE') {
+    groundCrackers.push({
+      type: 'RISHI_FINALE',
+      x: cx,
+      y: cy,
+      fuseX: cx,
+      fuseY: cy - 42,
+      state: 'READY',
+      timer: 0,
+      waveCount: 0
+    });
+  }
+
+  if (fuljhadi.state === 'NONE') {
+    showBanner('1️⃣ पहले बाईं तरफ रखे "फुलझड़ी स्टैंड" को छूकर फुलझड़ी उठाएं!');
+  } else if (fuljhadi.state === 'UNLIT') {
+    showBanner('2️⃣ अब फुलझड़ी को पास रखी "जलती मोमबत्ती" की लौ पर छुआकर जलाएं!');
+  } else {
+    if (type === 'ANAR' || type === 'CHAKRI' || type === 'ROCKET' || type === 'SKYSHOT') {
+      showBanner('3️⃣ तीनों में से किसी भी पटाखे की बाती पर जलती फुलझड़ी लगाएं!');
+    } else {
+      showBanner('3️⃣ शाबाश! अब जलती फुलझड़ी को पटाखे की लाल बाती पर लगाएं!');
+    }
+  }
+}
+
+// ================= TOUCH & CANDLE / FULJHADI INTERACTION =================
+function getPos(e) {
+  if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  if (e.changedTouches && e.changedTouches.length > 0) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+  return { x: e.clientX, y: e.clientY };
+}
+
+function handlePointer(pos, isFirstTap) {
+  pointer.x = pos.x;
+  pointer.y = pos.y;
+  fuljhadi.x = pos.x;
+  fuljhadi.y = pos.y;
+
+  if (pos.y < 90 || pos.y > H - 95) return;
+
+  // TAB 1: HOME DECORATION
+  if (currentTab === 1) {
+    let hitDiya = false;
+    house.diyas.forEach(d => {
+      if (Math.hypot(pos.x - d.x, pos.y - d.y) < 34) {
+        hitDiya = true;
+        if (currentTool === 'BATI' && !d.hasBati) {
+          d.hasBati = true;
+          playSFX('pop');
+          spawnParticles(d.x, d.y, '#fff', 8, 2);
+          if (house.diyas.every(x => x.hasBati)) {
+            speakHindi('सारे दीयों में बाती लग गई! अब तेल भरें!');
+            selectTool('OIL');
+          }
+        } else if (currentTool === 'OIL') {
+          if (!d.hasBati && isFirstTap) speakHindi('पहले दीये में रुई की बाती लगाओ!');
+          else if (d.hasBati && !d.hasOil) {
+            d.hasOil = true;
+            playSFX('pour');
+            spawnParticles(d.x, d.y, '#fbbf24', 10, 2);
+            if (house.diyas.every(x => x.hasOil)) {
+              speakHindi('तेल भर गया! अब माचिस से दीये जलाएं!');
+              selectTool('MATCH');
+            }
+          }
+        } else if (currentTool === 'MATCH') {
+          if (!d.hasBati && isFirstTap) speakHindi('पहले बाती और तेल डालें!');
+          else if (!d.hasOil && isFirstTap) speakHindi('बिना तेल के दीया नहीं जलेगा! पहले तेल डालें!');
+          else if (!d.isLit) {
+            d.isLit = true;
+            playSFX('chime');
+            vibratePhone(40);
+            spawnParticles(d.x, d.y - 10, '#ffd700', 20, 4);
+            if (house.diyas.every(x => x.isLit)) {
+              house.lightsOn = true;
+              house.toranOn = true;
+              speakHindi(`शानदार ${playerName}! सारे दीये जल उठे! अब Tab 2 में जाकर पटाखे फोड़ें!`);
+            }
+          }
+        }
+      }
+    });
+
+    if (!hitDiya && currentTool === 'RANGOLI' && pos.y > house.y + 15) {
+      const rx = house.x;
+      const ry = H * 0.72;
+      const dist = Math.hypot(pos.x - rx, pos.y - ry);
+      if (dist < 90) {
+        const cols = ['#ff0055', '#ffcc00', '#00ffcc', '#ff6600', '#a855f7', '#22c55e'];
+        const col = cols[Math.floor(Math.random() * cols.length)];
+        const baseA = Math.atan2(pos.y - ry, pos.x - rx);
+        for (let k = 0; k < 8; k++) {
+          const a = baseA + (k * Math.PI) / 4;
+          house.rangoliDots.push({ x: rx + Math.cos(a) * dist, y: ry + Math.sin(a) * dist, color: col, r: 5.5 });
+        }
+        if (house.rangoliDots.length > 480) house.rangoliDots.splice(0, 8);
+        if (isFirstTap) playSFX('pop');
+      }
+    }
+    return;
+  }
+
+  // TABS 2, 3, 4: PICK FULJHADI -> LIGHT FROM CANDLE -> BURN CRACKER
+  const standDist = Math.hypot(pos.x - candleStation.standX, pos.y - (candleStation.standY - 25));
+  const candleFlameX = candleStation.candleX;
+  const candleFlameY = candleStation.candleY - 58;
+  const candleDist = Math.hypot(pos.x - candleFlameX, pos.y - candleFlameY);
+
+  // Step 1: Pick Fuljhadi from Stand
+  if (standDist < 42) {
+    if (fuljhadi.state === 'NONE') {
+      fuljhadi.state = 'UNLIT';
+      playSFX('pop');
+      vibratePhone(30);
+      speakHindi('फुलझड़ी हाथ में आ गई! अब इसे पास रखी मोमबत्ती की लौ पर छुआकर जलाओ!');
+    }
+    return;
+  }
+
+  // Step 2: Light Fuljhadi from Candle Flame
+  if (candleDist < 45) {
+    if (fuljhadi.state === 'NONE') {
+      if (isFirstTap) speakHindi('पहले बाईं तरफ के स्टैंड से फुलझड़ी तो उठाओ!');
+    } else if (fuljhadi.state === 'UNLIT') {
+      fuljhadi.state = 'LIT';
+      playSFX('sizzle');
+      playSFX('chime');
+      vibratePhone(50);
+      spawnParticles(candleFlameX, candleFlameY, '#ffd700', 30, 5);
+      speakHindi('फुलझड़ी जल गई! अब इसे पटाखे की बाती पर लगाओ!');
+    }
+    return;
+  }
+
+  // Emit sparks if Fuljhadi is LIT
+  if (fuljhadi.state === 'LIT') {
+    const tipX = pos.x + 28;
+    const tipY = pos.y - 28;
+    spawnParticles(tipX, tipY, '#ffd700', 3, 4);
+    spawnParticles(tipX, tipY, '#ffffff', 2, 3);
+    if (Math.random() < 0.25) playSFX('sizzle');
+
+    // Step 3: Check Cracker Fuse Ignition with Burning Fuljhadi Tip
+    groundCrackers.forEach(c => {
+      if (c.state === 'READY') {
+        const dFuse = Math.hypot(tipX - c.fuseX, tipY - c.fuseY);
+        const dFinger = Math.hypot(pos.x - c.fuseX, pos.y - c.fuseY);
+        const dBody = Math.hypot(pos.x - c.x, pos.y - c.y);
+        if (dFuse < 38 || dFinger < 38 || dBody < 34) {
+          c.state = 'FUSE_BURNING';
+          c.timer = (c.type === 'SUTLI' || c.type === 'LAXMI') ? 85 : 30;
+          playSFX('sizzle');
+          vibratePhone(40);
+          if (c.type === 'SUTLI') {
+            speakHindi('सुतली बम की बाती जल गई! कान बंद कर लो, बहुत बड़ा धमाका होगा!');
+          } else if (c.type === 'LAXMI') {
+            speakHindi('लक्ष्मी बम से धुआँ निकल रहा है! अब इसके परखच्चे उड़ेंगे!');
+          }
+        }
+      }
+    });
+  } else {
+    groundCrackers.forEach(c => {
+      if (c.state === 'READY' && Math.hypot(pos.x - c.x, pos.y - c.y) < 50 && isFirstTap) {
+        if (fuljhadi.state === 'NONE') {
+          speakHindi('अरे! पहले बाईं तरफ रखे स्टैंड से फुलझड़ी उठाओ और मोमबत्ती से जलाओ!');
+        } else if (fuljhadi.state === 'UNLIT') {
+          speakHindi('फुलझड़ी अभी बुझी है! पहले उसे मोमबत्ती की लौ पर छुआकर जलाओ!');
+        }
+      }
+    });
+  }
+}
+
+canvas.addEventListener('mousedown', (e) => { initAudio(); pointer.active = true; handlePointer(getPos(e), true); });
+window.addEventListener('mousemove', (e) => { if (pointer.active) handlePointer(getPos(e), false); });
+window.addEventListener('mouseup', () => { pointer.active = false; });
+
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  initAudio();
+  pointer.active = true;
+  handlePointer(getPos(e), true);
+}, { passive: false });
+
+window.addEventListener('touchmove', (e) => {
+  if (pointer.active) {
+    e.preventDefault();
+    handlePointer(getPos(e), false);
+  }
+}, { passive: false });
+
+window.addEventListener('touchend', () => { pointer.active = false; });
+
+// ================= PARTICLES, DEBRIS & FLOWER FIREWORKS ENGINE =================
+function spawnParticles(x, y, color, count = 25, maxSpeed = 6, gravity = 0.14) {
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = Math.random() * maxSpeed + 1;
+    particles.push({
+      x, y,
+      vx: Math.cos(a) * s,
+      vy: Math.sin(a) * s,
+      color,
+      r: Math.random() * 3.5 + 1.5,
+      alpha: 1,
+      gravity
+    });
+  }
+}
+
+function spawnPaperDebris(x, y, count = 65, isLaxmi = true) {
+  const cols = isLaxmi
+    ? ['#dc2626', '#ffd700', '#16a34a', '#ffffff', '#f97316', '#fde047']
+    : ['#92400e', '#15803d', '#dc2626', '#fde047'];
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const spd = 4 + Math.random() * 14;
+    paperDebris.push({
+      x, y,
+      vx: Math.cos(a) * spd,
+      vy: Math.sin(a) * spd - 4,
+      w: 6 + Math.random() * 8,
+      h: 4 + Math.random() * 5,
+      color: cols[Math.floor(Math.random() * cols.length)],
+      rot: Math.random() * Math.PI * 2,
+      vRot: (Math.random() - 0.5) * 0.35,
+      alpha: 1.4
+    });
+  }
+}
+
+function triggerSutliMegaBlast(x, y) {
+  playSFX('sutli_boom');
+  screenShake = 46;
+  whiteFlash = 0.98;
+
+  burntMarks.push({ x, y: y + 10, rx: 38, ry: 12, alpha: 0.85 });
+
+  // Double expanding shockwave rings
+  shockwaves.push({ x, y, r: 8, maxR: Math.max(W, H) * 0.65, color: '#fde047', alpha: 1, lw: 10 });
+  shockwaves.push({ x, y, r: 4, maxR: Math.max(W, H) * 0.45, color: '#ff4400', alpha: 0.9, lw: 6 });
+
+  const cols = ['#ff0000', '#ffd700', '#ffffff', '#ff6600', '#00ffcc', '#a855f7'];
+  cols.forEach(col => spawnParticles(x, y, col, 48, 16, 0.16));
+
+  spawnPaperDebris(x, y, 35, false);
+
+  for (let i = 0; i < 14; i++) {
+    smokeClouds.push({
+      x: x + (Math.random() - 0.5) * 90,
+      y: y + (Math.random() - 0.5) * 50,
+      r: 26 + Math.random() * 30,
+      alpha: 0.65
+    });
+  }
+}
+
+function triggerLaxmiShredBlast(x, y) {
+  playSFX('boom');
+  playSFX('ladi_pop');
+  screenShake = 30;
+  whiteFlash = 0.78;
+
+  burntMarks.push({ x, y: y + 10, rx: 32, ry: 10, alpha: 0.8 });
+  shockwaves.push({ x, y, r: 6, maxR: 220, color: '#ff2200', alpha: 0.9, lw: 6 });
+
+  const cols = ['#ff0044', '#ffd700', '#00ff88', '#ffffff'];
+  cols.forEach(col => spawnParticles(x, y, col, 30, 11, 0.14));
+
+  // Massive explosion of shredded Laxmi Bomb wrapper pieces all over the screen!
+  spawnPaperDebris(x, y, 85, true);
+
+  for (let i = 0; i < 10; i++) {
+    smokeClouds.push({
+      x: x + (Math.random() - 0.5) * 70,
+      y: y + (Math.random() - 0.5) * 40,
+      r: 22 + Math.random() * 24,
+      alpha: 0.6
+    });
+  }
+}
+
+// Blooms Geometric Flowers in Sky when Rockets Explode
+function triggerFlowerBloom(x, y, flowerType = 1, isFinale = false) {
+  playSFX('flower_burst', flowerType);
+  screenShake = isFinale ? 28 : 18;
+  whiteFlash = isFinale ? 0.8 : 0.45;
+
+  const petals = flowerType === 1 ? 8 : (flowerType === 2 ? 12 : 16);
+  const outerCol = flowerType === 1 ? '#ff007f' : (flowerType === 2 ? '#00ffcc' : '#ffd700');
+  const midCol   = flowerType === 1 ? '#fde047' : (flowerType === 2 ? '#a855f7' : '#ff0055');
+  const coreCol  = '#ffffff';
+
+  const totalPts = 96;
+  for (let i = 0; i < totalPts; i++) {
+    const theta = (i / totalPts) * Math.PI * 2;
+    // Polar rose curve math: r = base + amp * cos(k * theta)
+    const petalFactor = 0.55 + 0.45 * Math.cos(petals * theta);
+    const speed = (isFinale ? 9.5 : 7.5) * petalFactor;
+
+    particles.push({
+      x, y,
+      vx: Math.cos(theta) * speed,
+      vy: Math.sin(theta) * speed,
+      color: petalFactor > 0.78 ? outerCol : midCol,
+      r: 3.6,
+      alpha: 1.35,
+      gravity: 0.035 // Slow float so the flower stays visible in sky
+    });
+
+    // Secondary inner layer of petals
+    const speedInner = speed * 0.52;
+    particles.push({
+      x, y,
+      vx: Math.cos(theta + 0.2) * speedInner,
+      vy: Math.sin(theta + 0.2) * speedInner,
+      color: midCol,
+      r: 2.8,
+      alpha: 1.25,
+      gravity: 0.03
+    });
+  }
+
+  // Bright Pistil / Flower Center Ring
+  for (let j = 0; j < 28; j++) {
+    const a = (j / 28) * Math.PI * 2;
+    particles.push({
+      x, y,
+      vx: Math.cos(a) * 2.2,
+      vy: Math.sin(a) * 2.2,
+      color: coreCol,
+      r: 3.2,
+      alpha: 1.3,
+      gravity: 0.02
+    });
+  }
+}
+
+// Special Sky Shapes for Tab 4 Sky-Shots (Star, Heart, Flower)
+function triggerSkyShotBurst(x, y, shapeType = 1) {
+  playSFX('flower_burst', shapeType);
+  screenShake = 14;
+  whiteFlash = 0.35;
+
+  if (shapeType === 1) {
+    // 5-Pointed Golden & Cyan Star
+    const pts = 75;
+    for (let i = 0; i < pts; i++) {
+      const a = (i / pts) * Math.PI * 2 - Math.PI / 2;
+      const starR = 0.55 + 0.45 * Math.cos(5 * a);
+      const spd = 7.2 * starR;
+      particles.push({
+        x, y,
+        vx: Math.cos(a) * spd,
+        vy: Math.sin(a) * spd,
+        color: i % 2 === 0 ? '#ffd700' : '#00ffff',
+        r: 3.4,
+        alpha: 1.25,
+        gravity: 0.035
+      });
+    }
+  } else if (shapeType === 2) {
+    // Glowing Red & Pink Heart Shape in Sky
+    const pts = 70;
+    for (let i = 0; i < pts; i++) {
+      const t = (i / pts) * Math.PI * 2;
+      const hx = 16 * Math.pow(Math.sin(t), 3);
+      const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+      particles.push({
+        x, y,
+        vx: hx * 0.42,
+        vy: hy * 0.42,
+        color: i % 2 === 0 ? '#ff0055' : '#ff99cc',
+        r: 3.5,
+        alpha: 1.3,
+        gravity: 0.03
+      });
+    }
+  } else {
+    triggerFlowerBloom(x, y, 3, false);
+  }
+}
+
+// Launch Sky Rocket that flies across the sky for 3.5 to 4.5 seconds (210-270 frames)
+function launchSkyRocket(x, y, rocketType = 1, isFinale = false, customShape = 0) {
+  playSFX('whistle', rocketType);
+  const flightDur = customShape > 0 ? 75 : (210 + Math.floor(Math.random() * 55)); // 3.5 - 4.4 seconds for rockets!
+  skyRockets.push({
+    x, y,
+    startX: x,
+    startY: y,
+    age: 0,
+    maxAge: flightDur,
+    rocketType: rocketType,
+    isFinale: isFinale,
+    customShape: customShape,
+    weaveAmp: 55 + Math.random() * 65,
+    weaveFreq: (rocketType === 1 ? 0.055 : 0.035) * (Math.random() < 0.5 ? 1 : -1),
+    driftX: (Math.random() - 0.5) * (W * 0.35),
+    targetY: H * 0.16 + Math.random() * (H * 0.14),
+    vx: 0,
+    vy: -3
+  });
+}
+
+function checkAutoRespawn() {
+  if (currentTab === 1) return;
+  // Never auto-erase the finished Snake; it stays until player switches tab/option or clicks Refill
+  if (currentTool === 'SNAKE') return;
+
+  const anyRemaining = groundCrackers.some(c => c.state !== 'DONE');
+  if (!anyRemaining && skyRockets.length === 0) {
+    setTimeout(() => {
+      if (currentTab !== 1 && currentTool !== 'SNAKE' && groundCrackers.every(c => c.state === 'DONE')) {
+        spawnSelectedCracker(currentTool);
+      }
+    }, 1500);
+  }
+}
+
+// ================= GAME UPDATE LOOP =================
+function update() {
+  if (screenShake > 0) screenShake *= 0.84;
+  if (whiteFlash > 0) whiteFlash *= 0.82;
+  if (skyBannerTimer > 0) skyBannerTimer--;
+
+  for (let i = groundCrackers.length - 1; i >= 0; i--) {
+    let c = groundCrackers[i];
+
+    if (c.state === 'FUSE_BURNING') {
+      c.timer--;
+      spawnParticles(c.fuseX, c.fuseY, '#ffcc00', 3, 3);
+
+      if (c.timer <= 0) {
+        if (c.type === 'ANAR') {
+          c.state = 'ACTIVE';
+          c.timer = c.duration;
+        } else if (c.type === 'CHAKRI') {
+          c.state = 'ACTIVE';
+          c.timer = c.duration;
+        } else if (c.type === 'SNAKE') {
+          c.state = 'ACTIVE';
+          c.timer = 440; // ~7.3 seconds slow realistic snake growth to top of screen!
+          speakHindi('देखो! सांप की गोली से कितना लंबा और मोटा काला सांप निकल रहा है!');
+        } else if (c.type === 'SUTLI') {
+          triggerSutliMegaBlast(c.x, c.y);
+          c.state = 'DONE';
+          groundCrackers.splice(i, 1);
+          checkAutoRespawn();
+        } else if (c.type === 'LAXMI') {
+          // Stage 1: Thick dramatic smoke before shredding explosion
+          c.state = 'SMOKING';
+          c.timer = 58;
+          playSFX('sizzle');
+        } else if (c.type === 'ROCKET') {
+          launchSkyRocket(c.x, c.y - 25, c.rocketType, false, 0);
+          c.state = 'DONE'; // Bottle stays on ground, rocket is launched
+          speakHindi('रॉकेट आसमान में गया! देखो पूरे आकाश में घूमकर फूल खिलाएगा!');
+          checkAutoRespawn();
+        } else if (c.type === 'LADI_20' || c.type === 'LADI_50') {
+          c.state = 'ACTIVE';
+          c.timer = c.ladiItems.length * 6;
+          c.ladiIndex = 0;
+        } else if (c.type === 'SKYSHOT') {
+          c.state = 'ACTIVE';
+          c.timer = c.shotsTotal * c.shotInterval;
+        } else if (c.type === 'RISHI_FINALE') {
+          c.state = 'ACTIVE';
+          c.timer = 220;
+          c.waveCount = 0;
+          speakHindi(`ग्रैंड फिनाले शुरू! हैप्पी दिवाली 2026 ${playerName}!`);
+        }
+      }
+    }
+    // Special Smoking Pre-Blast Stage for Laxmi Bomb
+    else if (c.state === 'SMOKING') {
+      c.timer--;
+      if (c.timer % 3 === 0) playSFX('sizzle');
+      // Puff thick grey/white smoke from top of cylinder
+      for (let k = 0; k < 2; k++) {
+        smokeClouds.push({
+          x: c.x + (Math.random() - 0.5) * 24,
+          y: c.y - 45 - Math.random() * 15,
+          r: 14 + Math.random() * 14,
+          alpha: 0.65
+        });
+      }
+      spawnParticles(c.x, c.y - 52, '#ff6600', 4, 4);
+
+      if (c.timer <= 0) {
+        triggerLaxmiShredBlast(c.x, c.y);
+        c.state = 'DONE';
+        groundCrackers.splice(i, 1);
+        checkAutoRespawn();
+      }
+    }
+    else if (c.state === 'ACTIVE') {
+      c.timer--;
+
+      // 1. 3-SIZE ANAR FOUNTAIN WITH DISTINCT COLORS & HEIGHTS
+      if (c.type === 'ANAR') {
+        if (c.timer % 4 === 0) playSFX('sizzle');
+        const maxReach = (c.y - 55) * c.heightFactor;
+        const g = 0.24;
+        const baseVy = -Math.sqrt(2 * g * Math.max(120, maxReach));
+
+        const count = c.size === 1 ? 6 : (c.size === 2 ? 9 : 13);
+        for (let k = 0; k < count; k++) {
+          particles.push({
+            x: c.x + (Math.random() - 0.5) * (8 * c.scale),
+            y: c.y - 32 * c.scale,
+            vx: (Math.random() - 0.5) * (4.5 + c.size * 1.4),
+            vy: baseVy * (0.76 + Math.random() * 0.32),
+            color: c.flameColors[Math.floor(Math.random() * c.flameColors.length)],
+            r: (Math.random() * 3.5 + 1.6) * (0.85 + c.size * 0.12),
+            alpha: 1.25,
+            gravity: g
+          });
+        }
+        // Jumbo Anar extra crackling stars near top
+        if (c.size === 3 && c.timer % 12 === 0) {
+          spawnParticles(c.x + (Math.random() - 0.5) * 60, c.y - maxReach * 0.7, '#ffffff', 6, 4, 0.08);
+        }
+      }
+
+      // 2. 3-SIZE SPINNING ZAMEEN CHAKRI
+      else if (c.type === 'CHAKRI') {
+        c.angle += 0.55 + c.size * 0.1;
+        if (c.timer % 4 === 0) playSFX('sizzle');
+
+        const roamRadius = 14 + c.size * 10;
+        c.x = c.baseX + Math.cos(c.timer * 0.14) * roamRadius;
+        c.y = c.baseY + Math.sin(c.timer * 0.18) * (roamRadius * 0.55);
+
+        for (let k = 0; k < 6; k++) {
+          const rimAngle = c.angle + (k * Math.PI) / 3;
+          const rimR = 20 * c.scale;
+          const rimX = c.x + Math.cos(rimAngle) * rimR;
+          const rimY = c.y + Math.sin(rimAngle) * rimR;
+          const tangentAngle = rimAngle + Math.PI * 0.42;
+          const spd = 5.0 + c.size * 1.8 + Math.random() * 2.5;
+          particles.push({
+            x: rimX,
+            y: rimY,
+            vx: Math.cos(tangentAngle) * spd,
+            vy: Math.sin(tangentAngle) * spd,
+            color: c.chakriColors[k % c.chakriColors.length],
+            r: Math.random() * 3.0 + 1.4,
+            alpha: 1,
+            gravity: 0.015
+          });
+        }
+      }
+
+      // 3. LONG, THICK, SLOW-GROWING REALISTIC SNAKE (STAYS ON SCREEN)
+      else if (c.type === 'SNAKE') {
+        if (c.timer % 6 === 0) playSFX('sizzle');
+        // Glow at tablet base while burning
+        spawnParticles(c.x, c.y - 6, '#ff6600', 2, 2.2, 0.05);
+
+        if (c.timer % 2 === 0) {
+          c.growProgress += 1;
+          const totalSteps = 220;
+          const frac = Math.min(1, c.growProgress / totalSteps);
+          const maxRise = c.y - 108; // Reaches all the way near the top header!
+          const curY = -frac * maxRise;
+          // Wide sinusoidal snake coils
+          const curX = Math.sin(frac * Math.PI * 6.5) * (58 * Math.pow(frac, 0.35));
+          const thickness = 24 - frac * 8; // Thick body (24px -> 16px head)
+          c.snakeNodes.push({ x: curX, y: curY, w: thickness });
+
+          if (c.growProgress % 8 === 0) {
+            smokeClouds.push({
+              x: c.x + curX,
+              y: c.y + curY,
+              r: 12 + Math.random() * 8,
+              alpha: 0.35
+            });
+          }
+        }
+
+        if (c.timer <= 0) {
+          c.state = 'FINISHED'; // Remains on screen until player changes tab or tool!
+          showBanner('🐍 वाह! कितना लंबा काला सांप बना है! नया सांप जलाने के लिए ऊपर "🔄 फिर से रखें" दबाएं!');
+        }
+      }
+
+      // 4. 20-BOMB & 50-BOMB LADI WITH FLYING PAPER SHREDS
+      else if (c.type === 'LADI_20' || c.type === 'LADI_50') {
+        if (c.timer % 6 === 0 && c.ladiIndex < c.ladiItems.length) {
+          const item = c.ladiItems[c.ladiIndex];
+          item.exploded = true;
+          c.ladiIndex++;
+
+          const bx = c.x + item.ox;
+          const by = c.y + item.oy;
+
+          const isFinaleCracker = (c.type === 'LADI_50' && c.ladiIndex >= c.ladiItems.length - 2);
+          if (isFinaleCracker) {
+            playSFX('sutli_boom');
+            screenShake = 26;
+            whiteFlash = 0.6;
+          } else {
+            playSFX('ladi_pop');
+            screenShake = 9;
+            whiteFlash = 0.22;
+          }
+
+          burntMarks.push({ x: bx, y: by, rx: 10, ry: 5, alpha: 0.55 });
+          spawnParticles(bx, by, '#ff2200', isFinaleCracker ? 30 : 16, 8);
+          spawnParticles(bx, by, '#ffff00', isFinaleCracker ? 24 : 12, 6);
+          spawnPaperDebris(bx, by, isFinaleCracker ? 18 : 6, true);
+          smokeClouds.push({ x: bx, y: by, r: 14, alpha: 0.45 });
+        }
+      }
+
+      // 5. 3 MULTI-SHOT SKY TUBES (7, 12, 25 SHOTS)
+      else if (c.type === 'SKYSHOT') {
+        if (c.timer % c.shotInterval === 0 && c.shotsLeft > 0) {
+          c.shotsLeft--;
+          spawnParticles(c.x, c.y - 36, '#ffd700', 12, 5);
+          launchSkyRocket(
+            c.x + (Math.random() - 0.5) * 16,
+            c.y - 36,
+            c.tubeIndex,
+            false,
+            c.tubeIndex // 1=Star, 2=Heart, 3=Flower
+          );
+        }
+      }
+
+      // 6. RISHI SIR ROYAL GRAND FINALE SHOW
+      else if (c.type === 'RISHI_FINALE') {
+        if (c.timer % 40 === 0 && c.waveCount < 5) {
+          c.waveCount++;
+          for (let k = -2; k <= 2; k++) {
+            launchSkyRocket(c.x + k * 22, c.y - 30, ((Math.abs(k) % 3) + 1), true, 0);
+          }
+        }
+      }
+
+      if (c.timer <= 0 && c.type !== 'SNAKE') {
+        burntMarks.push({ x: c.x, y: c.y + 8, rx: 22, ry: 7, alpha: 0.65 });
+        c.state = 'DONE';
+        groundCrackers.splice(i, 1);
+        checkAutoRespawn();
+      }
+    }
+  }
+
+  // Update Sky Rockets (3 to 5 second weaving flight across screen + Floral Bloom)
+  for (let i = skyRockets.length - 1; i >= 0; i--) {
+    let r = skyRockets[i];
+    r.age++;
+    const prog = r.age / r.maxAge;
+
+    const prevX = r.x;
+    const prevY = r.y;
+
+    // Smooth vertical climb + wide weaving across the sky
+    const climbEase = 1 - Math.pow(1 - prog, 1.6);
+    r.y = r.startY - (r.startY - r.targetY) * climbEase;
+    r.x = r.startX + r.driftX * prog + Math.sin(r.age * r.weaveFreq) * r.weaveAmp * Math.sin(prog * Math.PI);
+
+    // Clamp inside screen margins
+    r.x = Math.max(35, Math.min(W - 35, r.x));
+    r.vx = r.x - prevX;
+    r.vy = r.y - prevY;
+
+    // Rich rocket tail sparks
+    const tailCol = r.rocketType === 1 ? '#fde047' : (r.rocketType === 2 ? '#00ffcc' : '#ff007f');
+    spawnParticles(r.x, r.y, tailCol, 2, 1.8, 0.04);
+    if (r.age % 35 === 0 && r.customShape === 0) {
+      playSFX('sizzle');
+    }
+
+    if (r.age >= r.maxAge) {
+      if (r.customShape > 0) {
+        triggerSkyShotBurst(r.x, r.y, r.customShape);
+      } else {
+        triggerFlowerBloom(r.x, r.y, r.rocketType, r.isFinale);
+      }
+
+      if (r.isFinale) {
+        skyBannerText = `✨ Happy Diwali 2026 ${playerName}! ✨`;
+        skyBannerSubText = '🌟 Game Design by Rishi Sir 🌟';
+        skyBannerTimer = 300;
+      }
+      skyRockets.splice(i, 1);
+      checkAutoRespawn();
+    }
+  }
+
+  // Update Shockwaves
+  for (let i = shockwaves.length - 1; i >= 0; i--) {
+    let sw = shockwaves[i];
+    sw.r += (sw.maxR - sw.r) * 0.16 + 6;
+    sw.alpha -= 0.032;
+    if (sw.alpha <= 0) shockwaves.splice(i, 1);
+  }
+
+  // Update Fluttering Paper Debris (Laxmi & Sutli Bombs)
+  for (let i = paperDebris.length - 1; i >= 0; i--) {
+    let d = paperDebris[i];
+    d.x += d.vx;
+    d.y += d.vy;
+    d.vx *= 0.96;
+    d.vy += 0.18; // Gravity
+    if (d.vy > 2.8) d.vy = 2.8; // Terminal flutter velocity
+    d.x += Math.sin(Date.now() * 0.015 + i) * 0.9;
+    d.rot += d.vRot;
+
+    // Rest briefly on floor before fading
+    if (d.y > H * 0.78) {
+      d.y = H * 0.78;
+      d.vx *= 0.7;
+      d.vRot = 0;
+    }
+    d.alpha -= 0.008;
+    if (d.alpha <= 0) paperDebris.splice(i, 1);
+  }
+
+  // Update Particles
+  for (let i = particles.length - 1; i >= 0; i--) {
+    let p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += p.gravity;
+    p.alpha -= 0.016;
+    if (p.alpha <= 0) particles.splice(i, 1);
+  }
+
+  // Update Smoke
+  for (let i = smokeClouds.length - 1; i >= 0; i--) {
+    let s = smokeClouds[i];
+    s.y -= 0.65;
+    s.r += 0.22;
+    s.alpha -= 0.011;
+    if (s.alpha <= 0) smokeClouds.splice(i, 1);
+  }
+}
+
+// ================= RENDER SCENE =================
+function draw() {
+  ctx.save();
+  if (screenShake > 0.4) {
+    ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
+  }
+
+  if (currentTab === 1) {
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, H);
+    skyGrad.addColorStop(0, '#070112');
+    skyGrad.addColorStop(0.55, '#1d0528');
+    skyGrad.addColorStop(1, '#2b0918');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = '#1e0816';
+    ctx.fillRect(0, house.y, W, H - house.y);
+    drawIndianHouse();
+  } 
+  else {
+    // PITCH DARK NIGHT SKY FOR FIREWORKS (Tabs 2, 3, 4)
+    const nightGrad = ctx.createLinearGradient(0, 0, 0, H);
+    nightGrad.addColorStop(0, '#010005');
+    nightGrad.addColorStop(0.72, '#050212');
+    nightGrad.addColorStop(1, '#0e071a');
+    ctx.fillStyle = nightGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Distant Stars
+    ctx.fillStyle = '#fff';
+    stars.forEach(s => {
+      ctx.globalAlpha = 0.25 + Math.sin(Date.now() * 0.003 + s.x) * 0.25;
+      ctx.beginPath();
+      ctx.arc(s.x % W, s.y % (H * 0.65), s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    // Ground Courtyard Floor
+    const floorY = H * 0.68;
+    ctx.fillStyle = '#0c0614';
+    ctx.fillRect(0, floorY, W, H - floorY);
+    ctx.strokeStyle = 'rgba(255, 153, 0, 0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, floorY);
+    ctx.lineTo(W, floorY);
+    ctx.stroke();
+
+    // Burnt Ash Marks on Floor
+    burntMarks.forEach(bm => {
+      ctx.save();
+      ctx.globalAlpha = bm.alpha;
+      ctx.fillStyle = '#030106';
+      ctx.beginPath();
+      ctx.ellipse(bm.x, bm.y, bm.rx, bm.ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // Draw Left Candle & Fuljhadi Holder Station
+    drawCandleAndStand();
+
+    // Draw Ground Crackers
+    drawGroundCrackers();
+  }
+
+  // Draw Flying Sky Rockets oriented along velocity vector
+  skyRockets.forEach(r => {
+    ctx.save();
+    ctx.translate(r.x, r.y);
+    const ang = Math.atan2(r.vy, r.vx) + Math.PI / 2;
+    ctx.rotate(ang);
+    ctx.fillStyle = r.rocketType === 1 ? '#3b82f6' : (r.rocketType === 2 ? '#ec4899' : '#10b981');
+    ctx.fillRect(-4, -8, 8, 16);
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath();
+    ctx.moveTo(-6, -8);
+    ctx.lineTo(0, -18);
+    ctx.lineTo(6, -8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Smoke Clouds
+  smokeClouds.forEach(s => {
+    ctx.globalAlpha = Math.max(0, s.alpha);
+    ctx.fillStyle = '#64748b';
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // Shockwave Rings (Sutli & Laxmi Bomb)
+  shockwaves.forEach(sw => {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, sw.alpha);
+    ctx.strokeStyle = sw.color;
+    ctx.lineWidth = sw.lw;
+    ctx.beginPath();
+    ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  // Flying Paper Shreds / Debris (Laxmi Bomb & Ladi)
+  paperDebris.forEach(d => {
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, Math.max(0, d.alpha));
+    ctx.translate(d.x, d.y);
+    ctx.rotate(d.rot);
+    ctx.fillStyle = d.color;
+    ctx.fillRect(-d.w / 2, -d.h / 2, d.w, d.h);
+    ctx.restore();
+  });
+
+  // Additive Blending for Bright Firework Sparks & Flowers
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  particles.forEach(p => {
+    ctx.globalAlpha = Math.min(1, Math.max(0, p.alpha));
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+  ctx.globalAlpha = 1;
+
+  // Draw Active Fuljhadi Stick in Kid's Hand (Tabs 2, 3, 4)
+  if (currentTab !== 1 && fuljhadi.state !== 'NONE') {
+    drawHeldFuljhadi();
+  }
+
+  // Personalized Sky Finale Banner
+  if (skyBannerTimer > 0) {
+    ctx.save();
+    const pulse = 1 + Math.sin(Date.now() * 0.015) * 0.05;
+    ctx.translate(W / 2, H * 0.25);
+    ctx.scale(pulse, pulse);
+    ctx.textAlign = 'center';
+    ctx.shadowColor = '#ff6600';
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = '#ffd700';
+    ctx.font = 'bold 21px sans-serif';
+    ctx.fillText(skyBannerText, 0, 0);
+    ctx.fillStyle = '#00ffcc';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText(skyBannerSubText, 0, 26);
+    ctx.restore();
+  }
+
+  if (whiteFlash > 0.02) {
+    ctx.fillStyle = `rgba(255, 255, 230, ${whiteFlash})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  ctx.restore();
+  requestAnimationFrame(() => { update(); draw(); });
+}
+
+// Draw Left Side Fuljhadi Stand & Burning Candle (Mombatti)
+function drawCandleAndStand() {
+  const sx = candleStation.standX;
+  const sy = candleStation.standY;
+  const cx = candleStation.candleX;
+  const cy = candleStation.candleY;
+
+  // 1. Fuljhadi Holder Stand
+  ctx.fillStyle = '#b45309';
+  ctx.fillRect(sx - 16, sy - 28, 32, 32);
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(sx - 16, sy - 28, 32, 32);
+
+  for (let i = -8; i <= 8; i += 4) {
+    ctx.strokeStyle = '#9ca3af';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(sx + i, sy - 28);
+    ctx.lineTo(sx + i * 1.4, sy - 56);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(sx + i * 1.4, sy - 56, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = '#fde047';
+  ctx.font = 'bold 10.5px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🎇 1. फुलझड़ी', sx, sy + 18);
+
+  if (fuljhadi.state === 'NONE') {
+    const bounce = Math.sin(Date.now() * 0.01) * 4;
+    ctx.fillStyle = '#00ffcc';
+    ctx.fillText('👇 उठाएं', sx, sy - 66 + bounce);
+  }
+
+  // 2. Burning Mombatti (Pillar Candle)
+  ctx.fillStyle = '#fef08a';
+  ctx.fillRect(cx - 9, cy - 46, 18, 50);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(cx - 9, cy - 46, 18, 50);
+
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - 46);
+  ctx.lineTo(cx, cy - 52);
+  ctx.stroke();
+
+  const flick = Math.sin(Date.now() * 0.02) * 2.5;
+  const glow = ctx.createRadialGradient(cx, cy - 60, 2, cx, cy - 60, 32);
+  glow.addColorStop(0, 'rgba(255, 200, 0, 0.8)');
+  glow.addColorStop(1, 'rgba(255, 100, 0, 0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(cx, cy - 60, 32, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#ff6600';
+  ctx.beginPath();
+  ctx.moveTo(cx - 6, cy - 52);
+  ctx.quadraticCurveTo(cx + flick, cy - 74, cx + 6, cy - 52);
+  ctx.fill();
+
+  ctx.fillStyle = '#ffffaa';
+  ctx.beginPath();
+  ctx.arc(cx, cy - 55, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#fde047';
+  ctx.font = 'bold 10.5px sans-serif';
+  ctx.fillText('🕯️ 2. मोमबत्ती', cx, cy + 18);
+
+  if (fuljhadi.state === 'UNLIT') {
+    const bounce = Math.sin(Date.now() * 0.01) * 4;
+    ctx.fillStyle = '#ff9900';
+    ctx.fillText('🔥 यहाँ जलाएं', cx, cy - 80 + bounce);
+  }
+}
+
+function drawHeldFuljhadi() {
+  const x = fuljhadi.x;
+  const y = fuljhadi.y;
+  const tipX = x + 28;
+  const tipY = y - 28;
+
+  ctx.strokeStyle = '#d1d5db';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x - 10, y + 10);
+  ctx.lineTo(tipX, tipY);
+  ctx.stroke();
+
+  ctx.strokeStyle = fuljhadi.state === 'LIT' ? '#fbbf24' : '#6b7280';
+  ctx.lineWidth = 5.5;
+  ctx.beginPath();
+  ctx.moveTo(x + 6, y - 6);
+  ctx.lineTo(tipX, tipY);
+  ctx.stroke();
+
+  if (fuljhadi.state === 'LIT') {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, 7, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#ffd700';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 6; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const len = 10 + Math.random() * 14;
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(tipX + Math.cos(a) * len, tipY + Math.sin(a) * len);
+      ctx.stroke();
+    }
+  }
+}
+
+function drawGroundCrackers() {
+  groundCrackers.forEach(c => {
+    ctx.save();
+    ctx.translate(c.x, c.y);
+
+    // 1. 3-SIZE ANAR CONES
+    if (c.type === 'ANAR') {
+      const sc = c.scale || 1;
+      ctx.save();
+      ctx.scale(sc, sc);
+      const grad = ctx.createLinearGradient(-22, 0, 22, 0);
+      if (c.size === 1) {
+        grad.addColorStop(0, '#0284c7'); grad.addColorStop(0.5, '#38bdf8'); grad.addColorStop(1, '#0284c7');
+      } else if (c.size === 2) {
+        grad.addColorStop(0, '#b91c1c'); grad.addColorStop(0.5, '#f59e0b'); grad.addColorStop(1, '#b91c1c');
+      } else {
+        grad.addColorStop(0, '#7e22ce'); grad.addColorStop(0.5, '#ec4899'); grad.addColorStop(1, '#7e22ce');
+      }
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(-24, 16);
+      ctx.lineTo(0, -34);
+      ctx.lineTo(24, 16);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Decorative star band
+      ctx.fillStyle = '#fde047';
+      ctx.fillRect(-13, -6, 26, 5);
+      ctx.restore();
+
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 10.5px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(c.label, 0, 32);
+
+      c.fuseX = c.x;
+      c.fuseY = c.y - 36 * sc;
+    } 
+
+    // 2. 3-SIZE ZAMEEN CHAKRI DISCS
+    else if (c.type === 'CHAKRI') {
+      const sc = c.scale || 1;
+      ctx.save();
+      ctx.rotate(c.angle);
+      ctx.scale(sc, sc);
+
+      ctx.fillStyle = c.size === 1 ? '#f59e0b' : (c.size === 2 ? '#ec4899' : '#8b5cf6');
+      ctx.beginPath();
+      ctx.arc(0, 0, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3.2;
+      ctx.stroke();
+
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(0, 0, 13, 0, Math.PI * 1.5);
+      ctx.stroke();
+
+      ctx.fillStyle = c.state === 'ACTIVE' ? '#ffffff' : '#be185d';
+      ctx.beginPath();
+      ctx.arc(0, 0, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      if (c.state === 'READY') {
+        ctx.fillStyle = '#fde047';
+        ctx.font = 'bold 10.5px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(c.label, 0, 34);
+      }
+
+      c.fuseX = c.x + 22 * sc;
+      c.fuseY = c.y;
+    } 
+
+    // 3. LONG THICK REALISTIC BLACK SNAKE (SAAP KI GOLI)
+    else if (c.type === 'SNAKE') {
+      // Glowing embers under tablet while active
+      if (c.state === 'ACTIVE') {
+        const g = ctx.createRadialGradient(0, 0, 4, 0, 0, 28);
+        g.addColorStop(0, 'rgba(255, 102, 0, 0.85)');
+        g.addColorStop(1, 'rgba(255, 102, 0, 0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(0, 0, 28, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Black Snake Tablet Pill on Ground
+      ctx.fillStyle = '#111827';
+      ctx.beginPath();
+      ctx.ellipse(0, 4, 18, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#4b5563';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Draw Thick Ribbed Carbon Snake Body & Coiled Head
+      if (c.snakeNodes && c.snakeNodes.length > 1) {
+        // Outer dark carbon body
+        ctx.strokeStyle = '#18181b';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        for (let k = 1; k < c.snakeNodes.length; k++) {
+          const p0 = c.snakeNodes[k - 1];
+          const p1 = c.snakeNodes[k];
+          ctx.lineWidth = p1.w;
+          ctx.beginPath();
+          ctx.moveTo(p0.x, p0.y);
+          ctx.lineTo(p1.x, p1.y);
+          ctx.stroke();
+        }
+
+        // Textured grey-brown ash ribs & scales along the snake body
+        for (let k = 2; k < c.snakeNodes.length; k += 4) {
+          const pt = c.snakeNodes[k];
+          ctx.fillStyle = (k % 8 === 0) ? '#3f3f46' : '#27272a';
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, pt.w * 0.42, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Realistic Snake Head at the leading tip!
+        const head = c.snakeNodes[c.snakeNodes.length - 1];
+        const prev = c.snakeNodes[Math.max(0, c.snakeNodes.length - 4)];
+        const headAngle = Math.atan2(head.y - prev.y, head.x - prev.x);
+
+        ctx.save();
+        ctx.translate(head.x, head.y);
+        ctx.rotate(headAngle);
+
+        // Forked red snake tongue
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(10, 0);
+        ctx.lineTo(22, 0);
+        ctx.lineTo(27, -5);
+        ctx.moveTo(22, 0);
+        ctx.lineTo(27, 5);
+        ctx.stroke();
+
+        // Oval Snake Head
+        ctx.fillStyle = '#09090b';
+        ctx.beginPath();
+        ctx.ellipse(2, 0, 13, 9.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#52525b';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Glowing Yellow Snake Eyes
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath();
+        ctx.arc(5, -4.5, 2.3, 0, Math.PI * 2);
+        ctx.arc(5, 4.5, 2.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      c.fuseX = c.x;
+      c.fuseY = c.y - 12;
+    } 
+
+    // 4. REALISTIC ROUND/OVAL SUTLI BOMB WITH JUTE TWINE WRAPPING
+    else if (c.type === 'SUTLI') {
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(0, -8, 28, 25, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#a16207'; // Burlap / Jute base
+      ctx.fill();
+      ctx.clip();
+
+      // Criss-cross jute twine (Sutli) threads
+      ctx.strokeStyle = '#ca8a04';
+      ctx.lineWidth = 3.2;
+      for (let t = -32; t <= 32; t += 7) {
+        ctx.beginPath();
+        ctx.moveTo(t - 15, -35);
+        ctx.lineTo(t + 15, 20);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(t + 15, -35);
+        ctx.lineTo(t - 15, 20);
+        ctx.stroke();
+      }
+
+      // Traditional green & red sutli bands
+      ctx.strokeStyle = '#15803d';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(-30, -14); ctx.lineTo(30, -2);
+      ctx.moveTo(-30, -2);  ctx.lineTo(30, -14);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#dc2626';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(-28, -8); ctx.lineTo(28, -8);
+      ctx.stroke();
+      ctx.restore();
+
+      // Outer rim highlight
+      ctx.strokeStyle = '#eab308';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(0, -8, 28, 25, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Curved braided wick
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, -32);
+      ctx.quadraticCurveTo(8, -42, 6, -48);
+      ctx.stroke();
+
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('सुतली बम', 0, 32);
+
+      c.fuseX = c.x + 6;
+      c.fuseY = c.y - 48;
+    } 
+
+    // 5. REALISTIC TALL CYLINDER LAXMI BOMB
+    else if (c.type === 'LAXMI') {
+      // Shaking animation while puffing smoke!
+      if (c.state === 'SMOKING') {
+        ctx.translate((Math.random() - 0.5) * 5, (Math.random() - 0.5) * 3);
+      }
+
+      // Tall red cylinder body
+      const grad = ctx.createLinearGradient(-15, 0, 15, 0);
+      grad.addColorStop(0, '#991b1b');
+      grad.addColorStop(0.5, '#ef4444');
+      grad.addColorStop(1, '#991b1b');
+      ctx.fillStyle = grad;
+      ctx.fillRect(-15, -48, 30, 62);
+
+      // Gold & Green decorative top/bottom borders
+      ctx.fillStyle = '#15803d';
+      ctx.fillRect(-15, -48, 30, 7);
+      ctx.fillRect(-15, 7, 30, 7);
+
+      // Center Golden Label Band
+      ctx.fillStyle = '#fef08a';
+      ctx.fillRect(-15, -30, 30, 24);
+      ctx.strokeStyle = '#b45309';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(-15, -30, 30, 24);
+
+      // Emblem inside label
+      ctx.fillStyle = '#dc2626';
+      ctx.beginPath();
+      ctx.arc(0, -18, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffd700';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('लक्ष्मी', 0, -15);
+
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-15, -48, 30, 62);
+
+      // Top Fuse
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(0, -48);
+      ctx.lineTo(0, -60);
+      ctx.stroke();
+
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('लक्ष्मी बम', 0, 30);
+
+      c.fuseX = c.x;
+      c.fuseY = c.y - 60;
+    } 
+
+    // 6. 3 BOTTLE ROCKETS IN GLASS BOTTLES
+    else if (c.type === 'ROCKET') {
+      // Draw Glass Bottle Holder on Ground (Always visible)
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.45)';
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(-10, 16);
+      ctx.lineTo(-10, -4);
+      ctx.lineTo(-4, -14);
+      ctx.lineTo(-4, -24);
+      ctx.lineTo(4, -24);
+      ctx.lineTo(4, -14);
+      ctx.lineTo(10, -4);
+      ctx.lineTo(10, 16);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Only draw rocket inside bottle if not yet launched
+      if (c.state !== 'DONE') {
+        // Wooden Guide Stick
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(0, 14);
+        ctx.lineTo(0, -52);
+        ctx.stroke();
+
+        // Rocket Body Tube
+        ctx.fillStyle = c.bodyCol;
+        ctx.fillRect(-8, -48, 16, 26);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-8, -48, 16, 26);
+
+        // Diagonal stripes
+        ctx.fillStyle = '#fde047';
+        ctx.fillRect(-7, -38, 14, 5);
+
+        // Pointed Nose Cone
+        ctx.fillStyle = c.coneCol;
+        ctx.beginPath();
+        ctx.moveTo(-11, -48);
+        ctx.lineTo(0, -68);
+        ctx.lineTo(11, -48);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 10.5px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(c.label, 0, 32);
+
+      c.fuseX = c.x;
+      c.fuseY = c.y - 20;
+    } 
+
+    // 7. 20-BOMB & 50-BOMB LADI
+    else if (c.type === 'LADI_20' || c.type === 'LADI_50') {
+      // Braided Spine
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      if (c.type === 'LADI_20') {
+        const topY = -10 * 14 + 20;
+        ctx.moveTo(0, 28);
+        ctx.lineTo(0, topY);
+      } else {
+        ctx.moveTo(0, 32);
+        for (let r = 0; r < 25; r++) {
+          ctx.lineTo(Math.sin(r * 0.35) * 38, -r * 8.5 + 28);
+        }
+      }
+      ctx.stroke();
+
+      c.ladiItems.forEach(item => {
+        if (item.exploded) return;
+        ctx.fillStyle = item.isGold ? '#f59e0b' : '#dc2626';
+        ctx.fillRect(item.ox - 7, item.oy - 4, 14, 8);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(item.ox - 7, item.oy - 4, 14, 8);
+      });
+
+      if (c.state === 'ACTIVE') {
+        ctx.fillStyle = '#00ffcc';
+        ctx.font = 'bold 15px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`💥 ${c.ladiIndex} / ${c.ladiItems.length}`, 0, -195);
+      }
+
+      c.fuseX = c.x;
+      c.fuseY = c.y + 34;
+    } 
+
+    // 8. 3 SKY-SHOT LAUNCHER TUBES
+    else if (c.type === 'SKYSHOT') {
+      ctx.fillStyle = c.tubeColor;
+      ctx.fillRect(-16, -36, 32, 50);
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(-16, -36, 32, 50);
+
+      ctx.fillStyle = '#fde047';
+      ctx.fillRect(-16, -16, 32, 8);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(c.state === 'ACTIVE' ? `${c.shotsLeft}` : `${c.shotsTotal}`, 0, -4);
+
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 10.5px sans-serif';
+      ctx.fillText(c.label, 0, 30);
+
+      c.fuseX = c.x;
+      c.fuseY = c.y - 38;
+    }
+
+    // 9. RISHI SIR ROYAL GRAND FINALE BATTERY BOX
+    else if (c.type === 'RISHI_FINALE') {
+      const grad = ctx.createLinearGradient(-38, -36, 38, 16);
+      grad.addColorStop(0, '#b45309');
+      grad.addColorStop(0.5, '#f59e0b');
+      grad.addColorStop(1, '#78350f');
+      ctx.fillStyle = grad;
+      ctx.fillRect(-38, -36, 76, 52);
+      ctx.strokeStyle = '#fef08a';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(-38, -36, 76, 52);
+
+      // 5 Gold Launch Nozzles on Top
+      for (let k = -2; k <= 2; k++) {
+        ctx.fillStyle = '#dc2626';
+        ctx.fillRect(k * 14 - 5, -44, 10, 8);
+      }
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('👑 RISHI SIR', 0, -14);
+      ctx.fillStyle = '#fef08a';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.fillText('GRAND SHOW', 0, 2);
+
+      c.fuseX = c.x;
+      c.fuseY = c.y - 46;
+    }
+
+    ctx.restore();
+
+    // Fuse Target Indicator
+    if (c.state === 'READY') {
+      const pulse = Math.sin(Date.now() * 0.012) * 3;
+      ctx.fillStyle = '#ff0044';
+      ctx.beginPath();
+      ctx.arc(c.fuseX, c.fuseY, 6.5 + pulse * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffff00';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 10.5px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🎯 बाती', c.fuseX, c.fuseY - 11);
+    }
+  });
+}
+
+function drawIndianHouse() {
+  const hx = house.x, hy = house.y, hw = house.w, hh = house.h;
+  const left = hx - hw / 2, right = hx + hw / 2, top = hy - hh;
+
+  ctx.fillStyle = '#4a1525';
+  ctx.fillRect(left, top, hw, hh);
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(left, top, hw, hh);
+
+  ctx.fillStyle = '#7c2d12';
+  ctx.beginPath();
+  ctx.moveTo(left - 12, top);
+  ctx.lineTo(hx, top - 28);
+  ctx.lineTo(right + 12, top);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  const ledgeY = hy - hh * 0.45;
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(left, ledgeY);
+  ctx.lineTo(right, ledgeY);
+  ctx.stroke();
+
+  ctx.fillStyle = '#78350f';
+  ctx.fillRect(hx - 28, hy - 72, 56, 72);
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(hx - 28, hy - 72, 56, 72);
+
+  if (house.toranOn) {
+    for (let tx = left + 12; tx <= right - 12; tx += 16) {
+      ctx.fillStyle = (tx % 32 === 0) ? '#ff6600' : '#ffcc00';
+      ctx.beginPath();
+      ctx.arc(tx, top + 6, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  if (house.lightsOn) {
+    const cols = ['#ff0055', '#00ffcc', '#ffff00', '#3b82f6'];
+    const tick = Math.floor(Date.now() / 220);
+    for (let lx = left + 14; lx < right; lx += 22) {
+      for (let ly = top + 15; ly < hy - 10; ly += 26) {
+        if (Math.abs(lx - hx) < 32 && ly > hy - 75) continue;
+        ctx.fillStyle = cols[(lx + ly + tick) % cols.length];
+        ctx.beginPath();
+        ctx.arc(lx, ly, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  const rx = hx, ry = H * 0.72;
+  ctx.strokeStyle = 'rgba(255, 215, 0, 0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(rx, ry, 65, 0, Math.PI * 2);
+  ctx.stroke();
+
+  house.rangoliDots.forEach(dot => {
+    ctx.fillStyle = dot.color;
+    ctx.beginPath();
+    ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  house.diyas.forEach(d => {
+    ctx.fillStyle = '#b45309';
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, 16, 0, Math.PI);
+    ctx.fill();
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    if (d.hasOil) {
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.ellipse(d.x, d.y, 14, 4.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (d.hasBati) {
+      ctx.strokeStyle = d.hasOil ? '#fde047' : '#ffffff';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x + 11, d.y - 7);
+      ctx.stroke();
+    }
+    if (d.isLit) {
+      const fl = Math.sin(Date.now() * 0.02 + d.x) * 2.5;
+      ctx.fillStyle = '#ff9900';
+      ctx.beginPath();
+      ctx.moveTo(d.x + 6, d.y - 7);
+      ctx.quadraticCurveTo(d.x + 11 + fl, d.y - 26, d.x + 16, d.y - 7);
+      ctx.fill();
+    }
+  });
+}
+
+// Start Game & Save Kid's Name
+document.getElementById('startBtn').addEventListener('click', () => {
+  initAudio();
+  const rawName = document.getElementById('kidNameInput').value.trim();
+  if (rawName.length > 0) playerName = rawName;
+
+  document.getElementById('greetingPill').innerText = `🪔 Happy Diwali 2026 ${playerName}`;
+  document.getElementById('footerBar').innerText = `🪔 Happy Diwali 2026 ${playerName} • Game Design by Rishi Sir 🪔`;
+  document.getElementById('startOverlay').style.display = 'none';
+  switchTab(1);
+});
+
+renderBottomDock();
+draw();
+</script>
+</body>
+</html>
